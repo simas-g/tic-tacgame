@@ -1,7 +1,30 @@
-import Player from "./components/Player"
-import GameBoard from "./components/GameBoard"
+import Player from "./components/Player";
+import GameBoard from "./components/GameBoard";
+import Log from "./components/Log";
+import { useState } from "react";
 function App() {
-
+  const [active, setActive] = useState("X");
+  const [gameTurns, setGameTurns] = useState([]);
+  function handleSelectSquare(rowIndex, colIndex) {
+    setActive((prev) => (prev === "X" ? "0" : "X"));
+    setGameTurns((prev) => {
+      let currentPlayer = "X";
+      if (prev.length > 0 && prev[0].player === "X") {
+        currentPlayer = "0";
+      }
+      const updated = [
+        {
+          square: {
+            row: rowIndex,
+            col: colIndex,
+          },
+          player: currentPlayer,
+        },
+        ...prev,
+      ];
+      return updated;
+    });
+  }
 
   return (
     <main>
@@ -11,15 +34,16 @@ function App() {
       </header>
 
       <div id="game-container">
-          <ol id="players">
-            <Player name={'Player 1'} symbol={'X'}/>
-            <Player name={'Player 2'} symbol={'0'}/>
-          </ol>
+        <ol id="players" className="highlight-player">
+          <Player name={"Player 1"} symbol={"X"} isActive={active === "X"} />
+          <Player name={"Player 2"} symbol={"0"} isActive={active === "0"} />
+        </ol>
 
-        <GameBoard/>
+        <GameBoard onSelectSquare={handleSelectSquare} turns={gameTurns} />
       </div>
+      <Log />
     </main>
-  )
+  );
 }
 
-export default App
+export default App;
